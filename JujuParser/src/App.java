@@ -11,7 +11,7 @@ import charms.JujuCharmCommand;
 public class App {
 
 	public static void main(String[] args) throws Exception {
-		
+
 		String path = "C:\\Users\\LIS\\Desktop\\Charms";
 
 		HtmlCharmParser jujuParser = new HtmlCharmParser();
@@ -83,7 +83,23 @@ public class App {
 				charmCommand.addCommand("juju deploy --num-units $$quanty " + charmCommand.getName() + " $$service_name");
 			}
 			charmCommand.addCommand("rm -f ~/.ssh/config");
-
+			command = new Command("$$on = ON $$" + charmCommand.getVmName());
+			command.addLine("STAT=\"none\"");
+			command.addLine("RUN_STATUS=\"running\"");
+			command.addLine("while [ \"$STAT\" != \"$RUN_STATUS\" ];");
+			command.addLine("do sleep 20;");
+			command.addLine("juju status $$service_name > tmp.txt;");
+			command.addLine("STAT=$(sed -n -e '0,/agent-state: /s///p' tmp.txt);");
+			command.addLine("STAT=$(echo $STAT | tr -d ' ')");
+			command.addLine("done");
+			command.addLine("IPS=$(grep -o '[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}' tmp.txt)");
+			command.addLine("IPA=(${IPS//:/ })");
+			command.addLine("IP=$(echo ${IPA[0]})");
+			command.addLine("IP=$(echo $IP | tr -d ' ')");
+			command.addLine("echo $IP");
+			charmCommand.addCommand(command, true);
+			charmCommand.addCommand("$$vm = ASSIMILATEVM --targetIP $$on.stdout", true);
+			
 			FileOutputStream writer = new FileOutputStream(path + "\\deploy" + HtmlCharmParser.capitalize(charmCommand.getName()) + ".n");
 			//writer = new BufferedWriter(new FileWriter("C:\\Users\\LIS\\Desktop\\Charms\\deploy" + HtmlCharmParser.capitalize(charmCommand.getName()) + ".n"));
 			System.out.println(charmCommand.getName());

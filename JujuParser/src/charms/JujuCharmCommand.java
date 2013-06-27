@@ -139,10 +139,22 @@ public class JujuCharmCommand {
 	}
 	
 	public void addCommand(Command command){
-		this.addCommand(command.getCommand());
+		this.addCommand(command.getCommand(), false);
+	}
+	
+	public void addCommand(Command command, boolean custom){
+		addCommand(command.getCommand(), custom);
 	}
 	
 	public void addCommand(String command) {
+		addCommand(command, false);
+	}
+	
+	public void addCommand(String command, boolean custom) {
+		if(custom){
+			this.commands.add(command);
+			return;
+		}
 		if (this.commands == null) {
 			this.commands = new ArrayList<String>();
 			this.commands.add("$$" + vmName + " = CREATEVM --name " + vmName + " --n $$n");
