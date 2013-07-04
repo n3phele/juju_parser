@@ -99,6 +99,7 @@ public class App {
 			command.addLine("echo $IP");
 			charmCommand.addCommand(command, true);
 			charmCommand.addCommand("$$vm = ASSIMILATEVM --targetIP $$on.stdout", true);
+			charmCommand.addCommand("DESTROY $$" + charmCommand.getVmName(), true);
 			
 			FileOutputStream writer = new FileOutputStream(path + "\\deploy" + HtmlCharmParser.capitalize(charmCommand.getName()) + ".n");
 			//writer = new BufferedWriter(new FileWriter("C:\\Users\\LIS\\Desktop\\Charms\\deploy" + HtmlCharmParser.capitalize(charmCommand.getName()) + ".n"));
