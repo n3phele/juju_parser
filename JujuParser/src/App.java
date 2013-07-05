@@ -65,12 +65,7 @@ public class App {
 				command.addLine("then printf \"%s:\\\\n\" $$service_name > config.yaml");
 				for (CharmOption option : charmCommand.getOptions()) {
 					if (option.isOptional()) {
-						if (option.getType().equals("string"))
-							command.addLine("echo \"  " + option.getOriginalName() + ": ' $$" + option.getName() + " '\" >> config.yaml");
-						//command.addLine("printf \" '%s'\\\\n\" $$" + option.getName() + " >> config.yaml");
-						else
-							command.addLine("echo \"  " + option.getOriginalName() + ": $$" + option.getName() + " \" >> config.yaml");
-						//command.addLine("printf \" %s\\\\n\" $$" + option.getName() + " >> config.yaml");
+						command.addLine("echo \"  " + option.getOriginalName() + ": $$" + option.getName() + " \" >> config.yaml");
 					}
 				}
 				command.addLine("fi");
@@ -100,7 +95,7 @@ public class App {
 			charmCommand.addCommand(command, true);
 			charmCommand.addCommand("$$vm = ASSIMILATEVM --targetIP $$on.stdout", true);
 			charmCommand.addCommand("DESTROY $$" + charmCommand.getVmName(), true);
-			
+
 			FileOutputStream writer = new FileOutputStream(path + "\\deploy" + HtmlCharmParser.capitalize(charmCommand.getName()) + ".n");
 			//writer = new BufferedWriter(new FileWriter("C:\\Users\\LIS\\Desktop\\Charms\\deploy" + HtmlCharmParser.capitalize(charmCommand.getName()) + ".n"));
 			System.out.println(charmCommand.getName());
