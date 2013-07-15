@@ -75,7 +75,7 @@ public class CharmOption implements Comparable<CharmOption>{
 	}
 
 	public String toNShellParam() {
-		return String.format("%s%s %s = %s # %s", optional ? "optional " : "", "string", name, '"' + defaultValue + '"', optional ? originalName + ": " + description : description);
+		return String.format("%s%s %s = %s # %s", optional ? "optional " : "", type, name, '"' + defaultValue + '"', optional ? originalName + ": " + description : description);
 	}
 
 	@Override
