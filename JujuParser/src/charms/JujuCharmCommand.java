@@ -157,7 +157,6 @@ public class JujuCharmCommand {
 		}
 		if (this.commands == null) {
 			this.commands = new ArrayList<String>();
-			this.commands.add("$$" + vmName + " = CREATEVM --name " + vmName + " --n $$n");
 		}
 		this.commands.add("ON $$" + vmName + " " + command);
 	}

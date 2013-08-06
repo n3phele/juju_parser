@@ -3,6 +3,11 @@ package charms;
 public class Command {
 	private StringBuilder command;
 
+	
+	public Command() {
+		this.command = new StringBuilder('\n');
+	}
+	
 	public Command(String command) {
 		this.command = new StringBuilder(command + '\n');
 	}
