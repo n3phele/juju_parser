@@ -14,17 +14,14 @@ public class App {
 
 		String path = "C:\\Users\\LIS\\Desktop\\Charms";
 
-		HtmlCharmParser jujuParser = new HtmlCharmParser();
-		JujuCharmCommand charmCommand;
-		for (String url : jujuParser.getCharmsUrl("http://manage.jujucharms.com/charms/precise")) {
-			charmCommand = jujuParser.parseCharm(url + "/json");
+		for (JujuCharmCommand charmCommand : HtmlCharmParser.getCharms("http://manage.jujucharms.com/api/2/charms?series=precise&text=&type=approved")) {
 			charmCommand.setAuthor("Alexandre Tavares");
 			charmCommand.setCloudName("HPZone1: # HP Cloud");
 			charmCommand.setVersion("1.0.0");
 			charmCommand.setVmName("bootstrap");
 			charmCommand.setPreferred(true);
 			charmCommand.setPublic(true);
-			charmCommand.addOption(new CharmOption("service_name", "string", charmCommand.getName() + "01", "A name to the service", false));
+			charmCommand.addOption(new CharmOption("service_name", "string", charmCommand.getName(), "A name to the service", false));
 
 			//Just to the required options stay on the top of the list
 			Collections.sort(charmCommand.getOptions());
@@ -41,7 +38,7 @@ public class App {
 				command.addLine("then echo \"$${$$service_name}:\" > config.yaml;");
 				for (CharmOption option : charmCommand.getOptions()) {
 					if (option.isOptional()) {
-						command.addLine("\techo \"  " + option.getOriginalName() + ": $$" + option.getName() + " \" >> config.yaml;");
+						command.addLine("echo \"  " + option.getOriginalName() + ": $$" + option.getName() + " \" >> config.yaml;");
 					}
 				}
 				command.addLine("fi;");

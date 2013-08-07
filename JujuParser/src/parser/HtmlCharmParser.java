@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import charms.CharmOption;
 import charms.JujuCharmCommand;
@@ -20,20 +20,35 @@ public class HtmlCharmParser {
 	public HtmlCharmParser() {
 	}
 
-	public JujuCharmCommand parseCharm(String url) throws Exception{
-		JujuCharmCommand charm = new JujuCharmCommand();
+	/**
+	 * Get all the URLs of the charms based on the JSON of the URL passed as param.
+	 * 
+	 * @param url
+	 * @return List with the charms URLs
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public static ArrayList<JujuCharmCommand> getCharms(String url) throws IOException, ParseException {
+
+		JujuCharmCommand charm;
+		
+		Document document = Jsoup.connect(url).ignoreContentType(true).get();
+
+		ArrayList<JujuCharmCommand> list = new ArrayList<JujuCharmCommand>();
 		JSONParser parser = new JSONParser();
-		JSONObject jsonObject = (JSONObject)parser.parse(Jsoup.connect(url).get().text());
-		charm.setName(jsonObject.get("name").toString());
-		charm.setDescription(jsonObject.get("summary").toString());
-		
-		if(!jsonObject.containsKey("config"))
-			return charm;
-		
-		jsonObject = (JSONObject) jsonObject.get("config");
-		jsonObject = (JSONObject) jsonObject.get("options");
-		CharmOption charmOption;
-		
+		JSONObject jsonObject = (JSONObject) parser.parse(document.text());
+		JSONArray jsonArray = (JSONArray) jsonObject.get("result");
+		for (Object objCharm : jsonArray) {
+			charm = new JujuCharmCommand();
+			
+			jsonObject = (JSONObject) objCharm;
+			jsonObject = (JSONObject) jsonObject.get("charm");
+			charm.setName(jsonObject.get("name").toString());
+			charm.setDescription(jsonObject.get("summary").toString());
+
+			jsonObject = (JSONObject) jsonObject.get("options");
+			CharmOption charmOption;
+
 			for (Object obj : jsonObject.entrySet()) {
 				Entry<String, Map> entry = (Entry<String, Map>) obj;
 				charmOption = new CharmOption();
@@ -54,17 +69,7 @@ public class HtmlCharmParser {
 				charmOption.setOptional(true);
 				charm.addOption(charmOption);
 			}
-		
-		return charm;
-	}
-
-	public ArrayList<String> getCharmsUrl(String url) throws IOException {
-		Document document = Jsoup.connect(url).get();
-
-		ArrayList<String> list = new ArrayList<String>();
-		Elements links = document.select("td a");
-		for (Element link : links) {
-			list.add(link.baseUri() + "/" + link.text());
+			list.add(charm);
 		}
 
 		return list;

@@ -94,7 +94,7 @@ public class JujuCharmCommand {
 
 	public void addOption(CharmOption option) {
 		options.add(option);
-		if (option.isOptional())
+		if (option.isOptional() && !haveConfigOptions)
 			haveConfigOptions = true;
 	}
 
@@ -137,30 +137,39 @@ public class JujuCharmCommand {
 	public List<String> getCommands() {
 		return commands;
 	}
-	
-	public void addCommand(Command command){
+
+	public void addCommand(Command command) {
 		this.addCommand(command.getCommand(), false);
 	}
-	
-	public void addCommand(Command command, boolean custom){
+
+	public void addCommand(Command command, boolean custom) {
 		addCommand(command.getCommand(), custom);
 	}
-	
+
 	public void addCommand(String command) {
 		addCommand(command, false);
 	}
-	
+
+	/**
+	 * Adds a new command to the NShell
+	 * @param command
+	 * @param custom - if custom == true then doesn't add "ON $$vmName"
+	 */
 	public void addCommand(String command, boolean custom) {
-		if(custom){
-			this.commands.add(command);
-			return;
-		}
 		if (this.commands == null) {
 			this.commands = new ArrayList<String>();
+		}
+		if (custom) {
+			this.commands.add(command);
+			return;
 		}
 		this.commands.add("ON $$" + vmName + " " + command);
 	}
 
+	/**
+	 * 
+	 * @return String in NShell format
+	 */
 	public String toNShellCommand() {
 		StringBuilder nShellCommand = new StringBuilder();
 		final String EOL = "\n"; //System.getProperty("line.separator");
@@ -208,6 +217,10 @@ public class JujuCharmCommand {
 			this.optional = optional;
 		}
 
+		/**
+		 * 
+		 * @return String in NShell Input file format
+		 */
 		public String toNShellInputFile() {
 			return String.format("%s%s # %s", optional ? "optional " : "", name, description);
 		}

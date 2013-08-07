@@ -19,7 +19,10 @@ public class Command {
 	public void setCommand(String command) {
 		this.command = new StringBuilder(command);
 	}
-	
+	/**
+	 * Adds new line to the command
+	 * @param commandLine
+	 */
 	public void addLine(String commandLine){
 		this.command.append("\t\t");
 		this.command.append(commandLine);

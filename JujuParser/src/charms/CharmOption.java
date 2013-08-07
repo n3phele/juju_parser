@@ -1,7 +1,7 @@
 package charms;
 
 /**
- * @author LIS
+ * @author Alexandre Tavares
  * 
  */
 public class CharmOption implements Comparable<CharmOption>{
@@ -74,6 +74,10 @@ public class CharmOption implements Comparable<CharmOption>{
 		this.optional = optional;
 	}
 
+	/**
+	 * 
+	 * @return String in NShell Parameter format
+	 */
 	public String toNShellParam() {
 		return String.format("%s%s %s = %s # %s", optional ? "optional " : "", type, name, type.equals("string") ? '"' + defaultValue + '"' : defaultValue, optional ? originalName + ": " + description : description);
 	}
